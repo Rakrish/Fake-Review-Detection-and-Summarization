@@ -1,3 +1,5 @@
+import os
+import pickle
 import networkx as nx
 from time import sleep
 from collections import Counter
@@ -62,30 +64,38 @@ class Summarization:
 
 #if __name__ == "__main__":
 def summaryGen(fileName,domain,debugging=False):
-	global debug
-	debug=debugging
-	content=""
-	f=open("../datasets/"+domain+"/"+fileName+".txt","r")
-	for line in f:
-		if "helpful:" not in line and "score:" not in line and "reviewerID:" not in line:
-			content+=line
-	print "Before summarization.....\n"
-	sleep(2)
-	print content
-	sleep(2)
-	summary = Summarization(content)
-	summary.bag_of_words()
-	summary.normalization()
-	rankedText=summary.textrank()
-	summarized=summary.summarized_text()
-	if(debug):
-		print "\n\n"
+	if os.path.exists("../datasets/"+domain.lower()+".pickle"):
+		global debug
+		debug=debugging
+		content=""
+		#f=open("../datasets/"+domain+"/"+fileName+".txt","r")
+		brands_reviews = pickle.load( open( "../datasets/"+domain.lower()+".pickle", "rb" ) )
+		review_data = brands_reviews[fileName]
+		for i in review_data:
+			content+=i["review"]
+		'''for line in f:
+			if "helpful:" not in line and "score:" not in line and "reviewerID:" not in line:
+				content+=line'''
+		print "Before summarization.....\n"
 		sleep(2)
-		print "After summarization.....\n"
+		print content
 		sleep(2)
-		print summarized
+		summary = Summarization(content)
+		summary.bag_of_words()
+		summary.normalization()
+		rankedText=summary.textrank()
+		summarized=summary.summarized_text()
+		if(debug):
+			print "\n\n"
+			sleep(2)
+			print "\nAfter summarization.....\n"
+			sleep(2)
+			print summarized
+		else:
+			print "\nAfter summarization.....\n"
+			sleep(2)
+			print summarized
+		return [rankedText[i][1] for i in range(len(rankedText))]
 	else:
-		print "After summarization.....\n"
-		sleep(2)
-		print summarized
-	return [rankedText[i][1] for i in range(len(rankedText))]
+		print "Domain not in dataset"
+		return "Domain not in dataset"

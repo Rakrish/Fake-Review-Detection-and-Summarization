@@ -31,6 +31,6 @@ def parse(path):
 
 	filehandler = open("../datasets/cellphones.pickle","wb")
 	pickle.dump(brand_reviews,filehandler)	
-parse("../datasets/Gzips/cellphones.json.gz")
+parse("../datasets/Gzips/cellphones&tv.json.gz")
 		
 
